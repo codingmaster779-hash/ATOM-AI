@@ -1,27 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, PanelLeft, Sparkles, Zap, Brain, Radio, MessageSquare, Camera, BookOpen, Code2 } from 'lucide-react';
-import Sidebar from './components/Sidebar';
-import ChatMessage from './components/ChatMessage';
-import InputArea from './components/InputArea';
-import CameraModal from './components/CameraModal';
-import InstallGuide from './components/InstallGuide';
-import HumanCheck from './components/HumanCheck';
-import ParticleBackground from './components/ParticleBackground';
-import { generateResponse, speakText } from './services/geminiService';
+import { Menu, PanelLeft, Sparkles, Brain, Radio, Camera, BookOpen, Code2 } from 'lucide-react';
+import Sidebar from './Sidebar';
+import ChatMessage from './ChatMessage';
+import InputArea from './InputArea';
+import CameraModal from './CameraModal';
+import InstallGuide from './InstallGuide';
+import HumanCheck from './HumanCheck';
+import ParticleBackground from './ParticleBackground';
+import { generateResponse, speakText } from './geminiService';
 import { Message, Role, AppMode, AppSettings, Attachment } from './types';
 import { DEFAULT_SYSTEM_INSTRUCTION, MODE_CONFIG } from './constants';
 
 function App() {
-  // Authentication State with Session Persistence
   const [isVerified, setIsVerified] = useState(() => {
-    // Check if user was already verified in this session
     return sessionStorage.getItem('atom_verified') === 'true';
   });
 
-  // Message History (Session Only - No LocalStorage)
   const [messages, setMessages] = useState<Message[]>([]);
   
-  // App Settings (Session Only - No LocalStorage)
   const [settings, setSettings] = useState<AppSettings>({ 
     useTTS: false, 
     themeColor: 'cyan', 
@@ -41,12 +37,10 @@ function App() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initial Effects
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     if (window.innerWidth < 768) setIsSidebarOpen(false);
     
-    // Always request location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         p => setUserLocation({ latitude: p.coords.latitude, longitude: p.coords.longitude }), 
@@ -57,7 +51,6 @@ function App() {
 
   const handleVerifySuccess = () => {
     setIsVerified(true);
-    // Save to session storage so refresh doesn't reset verification
     sessionStorage.setItem('atom_verified', 'true');
   };
 
@@ -193,7 +186,6 @@ function App() {
           </div>
         </header>
 
-        {/* touch-pan-y allows normal vertical scrolling while overscroll-behavior-y: none prevents refresh */}
         <div className="flex-1 overflow-y-auto px-2 md:px-4 py-6 scroll-smooth custom-scrollbar touch-pan-y">
           <div className="max-w-4xl mx-auto h-full flex flex-col">
             {messages.length === 0 ? <EmptyState /> : (
