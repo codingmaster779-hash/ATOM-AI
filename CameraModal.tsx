@@ -1,3 +1,4 @@
+import GeminiService from './services/GeminiService';
 import React, { useRef, useEffect, useState } from 'react';
 import { X, RefreshCw, Zap } from 'lucide-react';
 import {  speakText  } from "./services/geminiService";
