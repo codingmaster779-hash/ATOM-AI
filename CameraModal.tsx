@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { X, RefreshCw, Zap } from 'lucide-react';
-import { speakText } from '../services/geminiService';
+import { speakText } from '../services/geminiService.ts';
 
 interface CameraModalProps {
   isOpen: boolean;
