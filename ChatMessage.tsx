@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Message, Role } from './types';
-import { Bot, User, FileText, Globe, MapPin, ExternalLink, Cpu, Terminal, Copy, Check } from 'lucide-react';
+import { Bot, User, FileText, Globe, MapPin, ExternalLink, Cpu, Copy, Check } from 'lucide-react';
 
 interface ChatMessageProps { message: Message; accentColor: string; }
+
+const accentColors = {
+  cyan: { text: 'text-cyan-400', border: 'border-cyan-500/30', glow: 'bg-cyan-500/10' },
+  purple: { text: 'text-purple-400', border: 'border-purple-500/30', glow: 'bg-purple-500/10' },
+  emerald: { text: 'text-emerald-400', border: 'border-emerald-500/30', glow: 'bg-emerald-500/10' },
+  rose: { text: 'text-rose-400', border: 'border-rose-500/30', glow: 'bg-rose-500/10' }
+};
 
 const CodeBlock = ({ children, className }: any) => {
   const [copied, setCopied] = useState(false);
@@ -29,20 +36,24 @@ const CodeBlock = ({ children, className }: any) => {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, accentColor }) => {
   const isUser = message.role === Role.USER;
+  const colors = (accentColors as any)[accentColor] || accentColors.cyan;
+
   return (
     <div className={`flex w-full mb-8 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div className={`flex max-w-[95%] md:max-w-[85%] gap-4 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/5 ${isUser ? 'bg-gray-800' : `bg-black`}`}>
-           {isUser ? <User className="w-5 h-5 text-gray-400" /> : <Bot className={`w-6 h-6 text-${accentColor}-400 shadow-sm`} />}
+           {isUser ? <User className="w-5 h-5 text-gray-400" /> : <Bot className={`w-6 h-6 ${colors.text} shadow-sm`} />}
         </div>
         <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} min-w-0 flex-1`}>
           {!isUser && (
             <div className="flex items-center gap-2 mb-1.5 pl-1 opacity-70">
-              <span className={`text-[10px] font-mono text-${accentColor}-400 uppercase tracking-widest flex items-center gap-1.5`}><Cpu className="w-3 h-3" /> Neural Core Response</span>
+              <span className={`text-[10px] font-mono ${colors.text} uppercase tracking-widest flex items-center gap-1.5`}><Cpu className="w-3 h-3" /> Neural Response</span>
               <span className="text-[10px] text-gray-600 font-mono">:: {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           )}
-          <div className={`relative px-6 py-5 rounded-2xl overflow-hidden w-full backdrop-blur-md ${isUser ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-tr-sm border border-white/10' : 'bg-black/40 border border-white/10 text-gray-100 rounded-tl-sm'}`}>
+          <div className={`relative px-6 py-5 rounded-2xl overflow-hidden w-full backdrop-blur-md ${isUser ? 'bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-tr-sm border border-white/10' : 'bg-black/60 border border-white/10 text-gray-100 rounded-tl-sm'}`}>
+            {!isUser && <div className={`absolute top-0 left-0 w-1 h-full ${colors.text} bg-current opacity-30`} />}
+            
             {message.attachments && message.attachments.length > 0 && (
               <div className="flex gap-2 mb-4 flex-wrap">
                 {message.attachments.map((att, idx) => (
@@ -63,11 +74,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, accentColor }) => {
             </div>
             {message.webSources && message.webSources.length > 0 && (
               <div className="mt-6 pt-4 border-t border-white/5">
-                <div className="text-[9px] uppercase tracking-widest text-gray-500 mb-3 font-bold flex items-center gap-2 font-mono"><Globe className="w-3 h-3" /> External Data Uplink</div>
+                <div className="text-[9px] uppercase tracking-widest text-gray-500 mb-3 font-bold flex items-center gap-2 font-mono"><Globe className="w-3 h-3" /> Web Intelligence Uplink</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {message.webSources.map((source, idx) => (
-                    <a key={idx} href={source.uri} target="_blank" rel="noreferrer" className="text-xs bg-white/5 text-gray-300 border border-white/5 p-2 rounded-lg flex items-center justify-between hover:bg-white/10 transition-all">
-                      <span className="truncate flex-1 mr-2">{source.title}</span> <ExternalLink className="w-3 h-3 opacity-50" />
+                    <a key={idx} href={source.uri} target="_blank" rel="noreferrer" className="text-xs bg-white/5 text-gray-300 border border-white/5 p-3 rounded-xl flex items-center justify-between hover:bg-white/10 transition-all group">
+                      <span className="truncate flex-1 mr-2">{source.title}</span> <ExternalLink className={`w-3 h-3 opacity-50 group-hover:${colors.text} transition-colors`} />
                     </a>
                   ))}
                 </div>
